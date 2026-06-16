@@ -7,6 +7,7 @@
 * Added Dart types mirroring for UpdateInfo
 * Initialize Velopack with URL just once after init
 * Added Dart initializeVelopack helper for one-step setup
+* Raised minimum Dart SDK to 3.6.0 for build hook support
 * Added download progress stream sink to Flutter
 * Used build hooks instead of CargoKit
 * Better example UI
