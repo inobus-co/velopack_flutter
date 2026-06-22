@@ -50,6 +50,9 @@ abstract class VelopackRustLibApiImplPlatform
   List<VelopackAsset> dco_decode_list_velopack_asset(dynamic raw);
 
   @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
   UpdateInfo? dco_decode_opt_box_autoadd_update_info(dynamic raw);
 
   @protected
@@ -99,6 +102,9 @@ abstract class VelopackRustLibApiImplPlatform
   @protected
   List<VelopackAsset> sse_decode_list_velopack_asset(
       SseDeserializer deserializer);
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
   UpdateInfo? sse_decode_opt_box_autoadd_update_info(
@@ -158,6 +164,9 @@ abstract class VelopackRustLibApiImplPlatform
   @protected
   void sse_encode_list_velopack_asset(
       List<VelopackAsset> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_update_info(

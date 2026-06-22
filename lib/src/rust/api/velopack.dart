@@ -8,30 +8,35 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `check_and_download_updates`, `get_update_manager`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `VelopackConfig`
 
-Future<void> initVelopack({required String url}) =>
-    VelopackRustLib.instance.api.crateApiVelopackInitVelopack(url: url);
+Future<void> initVelopack(
+        {required String url, String? channel, required bool allowDowngrade}) =>
+    VelopackRustLib.instance.api.crateApiVelopackInitVelopack(
+        url: url, channel: channel, allowDowngrade: allowDowngrade);
 
-Future<bool> isUpdateAvailable() =>
-    VelopackRustLib.instance.api.crateApiVelopackIsUpdateAvailable();
+Future<bool> isUpdateAvailable({String? channel}) =>
+    VelopackRustLib.instance.api
+        .crateApiVelopackIsUpdateAvailable(channel: channel);
 
-Future<UpdateInfo?> getLatestUpdateInfo() =>
-    VelopackRustLib.instance.api.crateApiVelopackGetLatestUpdateInfo();
+Future<UpdateInfo?> getLatestUpdateInfo({String? channel}) =>
+    VelopackRustLib.instance.api
+        .crateApiVelopackGetLatestUpdateInfo(channel: channel);
 
 Future<String> currentVersion() =>
     VelopackRustLib.instance.api.crateApiVelopackCurrentVersion();
 
-Stream<int> checkAndDownloadUpdatesWithProgress() =>
+Stream<int> checkAndDownloadUpdatesWithProgress({String? channel}) =>
     VelopackRustLib.instance.api
-        .crateApiVelopackCheckAndDownloadUpdatesWithProgress();
+        .crateApiVelopackCheckAndDownloadUpdatesWithProgress(channel: channel);
 
-Future<void> updateAndRestart() =>
-    VelopackRustLib.instance.api.crateApiVelopackUpdateAndRestart();
+Future<void> updateAndRestart({String? channel}) => VelopackRustLib.instance.api
+    .crateApiVelopackUpdateAndRestart(channel: channel);
 
-Future<void> updateAndExit() =>
-    VelopackRustLib.instance.api.crateApiVelopackUpdateAndExit();
+Future<void> updateAndExit({String? channel}) => VelopackRustLib.instance.api
+    .crateApiVelopackUpdateAndExit(channel: channel);
 
 Future<void> waitExitThenUpdate(
-        {required bool silent, required bool restart}) =>
-    VelopackRustLib.instance.api
-        .crateApiVelopackWaitExitThenUpdate(silent: silent, restart: restart);
+        {required bool silent, required bool restart, String? channel}) =>
+    VelopackRustLib.instance.api.crateApiVelopackWaitExitThenUpdate(
+        silent: silent, restart: restart, channel: channel);

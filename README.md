@@ -60,14 +60,51 @@ This is what Velopack Flutter is doing by setting the following values in `flutt
 
 | Function | Description                                                                                                                  |
 |----------|--------------------------------------------------------------|
-| `initializeVelopack({required String url})` | Initializes the bridge and configures Velopack with the update server URL.                                                      |
-| `isUpdateAvailable()` | Checks if an update is available.                                                                     |
-| `getLatestUpdateInfo()` | Gets detailed information about the latest available update.                                          |
+| `initializeVelopack({required String url, String? channel, bool allowDowngrade = false})` | Initializes the bridge and configures Velopack with the update server URL. Optionally overrides the update `channel` and allows downgrades (see [Channels](#channels)). |
+| `isUpdateAvailable({String? channel})` | Checks if an update is available. Pass `channel` to check a different channel for this call only (see [Channels](#channels)). |
+| `getLatestUpdateInfo({String? channel})` | Gets detailed information about the latest available update. Pass `channel` to query a different channel for this call only. |
 | `currentVersion()` | Returns the current application version as a string.                                                  |
-| `checkAndDownloadUpdatesWithProgress()` | Checks for updates, downloads them, and returns a progress stream.                |
-| `updateAndRestart()` | Applies downloaded updates and restarts the application.                                              |
-| `updateAndExit()` | Applies downloaded updates and exits the application.                                                 |
-| `waitExitThenUpdate({required bool silent, required bool restart})` | Waits for the app to exit, then applies updates. If `restart` is true, the app will restart after applying updates. Use `silent` to suppress UI messages. |
+| `checkAndDownloadUpdatesWithProgress({String? channel})` | Checks for updates, downloads them, and returns a progress stream. Pass `channel` to target a different channel for this call only. |
+| `updateAndRestart({String? channel})` | Applies downloaded updates and restarts the application. Pass `channel` to target a different channel for this call only. |
+| `updateAndExit({String? channel})` | Applies downloaded updates and exits the application. Pass `channel` to target a different channel for this call only. |
+| `waitExitThenUpdate({required bool silent, required bool restart, String? channel})` | Waits for the app to exit, then applies updates. If `restart` is true, the app will restart after applying updates. Use `silent` to suppress UI messages. Pass `channel` to target a different channel for this call only. |
+
+## Channels
+
+Velopack supports release channels (e.g. `staging`, `prod`), set when packaging with `vpk pack ... --channel <name>`. By default an installed app keeps receiving updates from the channel it was installed from — no extra code needed.
+
+To make the app follow a different channel, pass it to `initializeVelopack`:
+
+```dart
+await initializeVelopack(
+  url: 'https://example.com/releases',
+  channel: 'prod',
+);
+```
+
+The channel passed to `initializeVelopack` is the default for every call. To check or pull from a different channel without changing that default, pass `channel` to an individual function:
+
+```dart
+// Peek at what's on the beta channel while staying on the default channel
+final beta = await getLatestUpdateInfo(channel: 'beta');
+
+// Switch over by downloading and applying from beta
+await updateAndRestart(channel: 'beta');
+```
+
+A per-call `channel` overrides the init default for that call only; omit it to use the init default (or the install channel when none was set). Note that downgrades still require `allowDowngrade: true` at init, so switching to a channel whose latest version is older than the installed one needs that opt-in.
+
+The init-level default channel is read once at initialization, so changing *that* default takes effect on the **next launch**. Persist the user's selected channel (e.g. with `shared_preferences`), then restart the app to apply it.
+
+Switching to a channel whose latest version is **older** than the installed version is a downgrade. Velopack ignores downgrades unless you opt in:
+
+```dart
+await initializeVelopack(
+  url: 'https://example.com/releases',
+  channel: 'prod',        // e.g. prod is 1.0.0 while the app is on staging 1.1.0
+  allowDowngrade: true,   // required, otherwise no update is offered
+);
+```
 
 ## Packaging
 
