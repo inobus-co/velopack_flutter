@@ -51,27 +51,38 @@ pub fn init_velopack(url: String, channel: Option<String>, allow_downgrade: bool
 /// When `channel` is `Some`, it overrides the channel set at initialization for
 /// this call only; when `None`, the channel from `initializeVelopack` (or the
 /// install channel) is used.
-fn get_update_manager(channel: Option<String>) -> Result<UpdateManager, Error> {
+///
+/// When `allow_downgrade` is `Some`, it overrides the downgrade policy set at
+/// initialization for this call only; when `None`, the value from
+/// `initializeVelopack` is used. This is needed when switching to a channel
+/// whose latest version is older than the installed version.
+fn get_update_manager(
+    channel: Option<String>,
+    allow_downgrade: Option<bool>,
+) -> Result<UpdateManager, Error> {
     let config = VELOPACK_CONFIG.get().ok_or(Error::Other(
         "Velopack not initialized. Call initializeVelopack() first.".into(),
     ))?;
     let source = sources::HttpSource::new(&config.url);
     let options = UpdateOptions {
-        AllowVersionDowngrade: config.allow_downgrade,
+        AllowVersionDowngrade: allow_downgrade.unwrap_or(config.allow_downgrade),
         ExplicitChannel: channel.or_else(|| config.channel.clone()),
         ..Default::default()
     };
     UpdateManager::new(source, Some(options), None)
 }
 
-pub fn is_update_available(channel: Option<String>) -> Result<bool> {
-    let um = get_update_manager(channel)?;
+pub fn is_update_available(channel: Option<String>, allow_downgrade: Option<bool>) -> Result<bool> {
+    let um = get_update_manager(channel, allow_downgrade)?;
     let update_check = um.check_for_updates()?;
     Ok(matches!(update_check, UpdateCheck::UpdateAvailable(..)))
 }
 
-pub fn get_latest_update_info(channel: Option<String>) -> Result<Option<UpdateInfo>> {
-    let um = get_update_manager(channel)?;
+pub fn get_latest_update_info(
+    channel: Option<String>,
+    allow_downgrade: Option<bool>,
+) -> Result<Option<UpdateInfo>> {
+    let um = get_update_manager(channel, allow_downgrade)?;
     let update_check = um.check_for_updates()?;
     return match update_check {
         UpdateCheck::UpdateAvailable(updates) => Ok(Some(*updates)),
@@ -80,15 +91,16 @@ pub fn get_latest_update_info(channel: Option<String>) -> Result<Option<UpdateIn
 }
 
 pub fn current_version() -> Result<String> {
-    let um = get_update_manager(None)?;
+    let um = get_update_manager(None, None)?;
     Ok(um.get_current_version_as_string())
 }
 
 pub fn check_and_download_updates_with_progress(
     progress_sink: StreamSink<i16>,
     channel: Option<String>,
+    allow_downgrade: Option<bool>,
 ) -> Result<Option<UpdateInfo>> {
-    let um = get_update_manager(channel)?;
+    let um = get_update_manager(channel, allow_downgrade)?;
     if let UpdateCheck::UpdateAvailable(updates) = um.check_for_updates()? {
         // Create a channel for progress messages
         let (sx, rx) = mpsc::channel();
@@ -107,8 +119,11 @@ pub fn check_and_download_updates_with_progress(
     }
 }
 
-fn check_and_download_updates(channel: Option<String>) -> Result<Option<UpdateInfo>> {
-    let um = get_update_manager(channel)?;
+fn check_and_download_updates(
+    channel: Option<String>,
+    allow_downgrade: Option<bool>,
+) -> Result<Option<UpdateInfo>> {
+    let um = get_update_manager(channel, allow_downgrade)?;
     if let UpdateCheck::UpdateAvailable(updates) = um.check_for_updates()? {
         um.download_updates(&updates, None)?;
         Ok(Some(*updates))
@@ -117,25 +132,30 @@ fn check_and_download_updates(channel: Option<String>) -> Result<Option<UpdateIn
     }
 }
 
-pub fn update_and_restart(channel: Option<String>) -> Result<()> {
-    if let Some(updates) = check_and_download_updates(channel.clone())? {
-        let um = get_update_manager(channel)?;
+pub fn update_and_restart(channel: Option<String>, allow_downgrade: Option<bool>) -> Result<()> {
+    if let Some(updates) = check_and_download_updates(channel.clone(), allow_downgrade)? {
+        let um = get_update_manager(channel, allow_downgrade)?;
         um.apply_updates_and_restart(&updates)?;
     }
     Ok(())
 }
 
-pub fn update_and_exit(channel: Option<String>) -> Result<()> {
-    if let Some(updates) = check_and_download_updates(channel.clone())? {
-        let um = get_update_manager(channel)?;
+pub fn update_and_exit(channel: Option<String>, allow_downgrade: Option<bool>) -> Result<()> {
+    if let Some(updates) = check_and_download_updates(channel.clone(), allow_downgrade)? {
+        let um = get_update_manager(channel, allow_downgrade)?;
         um.apply_updates_and_exit(&updates)?;
     }
     Ok(())
 }
 
-pub fn wait_exit_then_update(silent: bool, restart: bool, channel: Option<String>) -> Result<()> {
-    if let Some(updates) = check_and_download_updates(channel.clone())? {
-        let um = get_update_manager(channel)?;
+pub fn wait_exit_then_update(
+    silent: bool,
+    restart: bool,
+    channel: Option<String>,
+    allow_downgrade: Option<bool>,
+) -> Result<()> {
+    if let Some(updates) = check_and_download_updates(channel.clone(), allow_downgrade)? {
+        let um = get_update_manager(channel, allow_downgrade)?;
         um.wait_exit_then_apply_updates(&updates, silent, restart, [""])?;
     }
     Ok(())

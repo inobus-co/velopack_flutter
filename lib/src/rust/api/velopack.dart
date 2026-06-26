@@ -15,28 +15,39 @@ Future<void> initVelopack(
     VelopackRustLib.instance.api.crateApiVelopackInitVelopack(
         url: url, channel: channel, allowDowngrade: allowDowngrade);
 
-Future<bool> isUpdateAvailable({String? channel}) =>
-    VelopackRustLib.instance.api
-        .crateApiVelopackIsUpdateAvailable(channel: channel);
+Future<bool> isUpdateAvailable({String? channel, bool? allowDowngrade}) =>
+    VelopackRustLib.instance.api.crateApiVelopackIsUpdateAvailable(
+        channel: channel, allowDowngrade: allowDowngrade);
 
-Future<UpdateInfo?> getLatestUpdateInfo({String? channel}) =>
-    VelopackRustLib.instance.api
-        .crateApiVelopackGetLatestUpdateInfo(channel: channel);
+Future<UpdateInfo?> getLatestUpdateInfo(
+        {String? channel, bool? allowDowngrade}) =>
+    VelopackRustLib.instance.api.crateApiVelopackGetLatestUpdateInfo(
+        channel: channel, allowDowngrade: allowDowngrade);
 
 Future<String> currentVersion() =>
     VelopackRustLib.instance.api.crateApiVelopackCurrentVersion();
 
-Stream<int> checkAndDownloadUpdatesWithProgress({String? channel}) =>
+Stream<int> checkAndDownloadUpdatesWithProgress(
+        {String? channel, bool? allowDowngrade}) =>
     VelopackRustLib.instance.api
-        .crateApiVelopackCheckAndDownloadUpdatesWithProgress(channel: channel);
+        .crateApiVelopackCheckAndDownloadUpdatesWithProgress(
+            channel: channel, allowDowngrade: allowDowngrade);
 
-Future<void> updateAndRestart({String? channel}) => VelopackRustLib.instance.api
-    .crateApiVelopackUpdateAndRestart(channel: channel);
+Future<void> updateAndRestart({String? channel, bool? allowDowngrade}) =>
+    VelopackRustLib.instance.api.crateApiVelopackUpdateAndRestart(
+        channel: channel, allowDowngrade: allowDowngrade);
 
-Future<void> updateAndExit({String? channel}) => VelopackRustLib.instance.api
-    .crateApiVelopackUpdateAndExit(channel: channel);
+Future<void> updateAndExit({String? channel, bool? allowDowngrade}) =>
+    VelopackRustLib.instance.api.crateApiVelopackUpdateAndExit(
+        channel: channel, allowDowngrade: allowDowngrade);
 
 Future<void> waitExitThenUpdate(
-        {required bool silent, required bool restart, String? channel}) =>
+        {required bool silent,
+        required bool restart,
+        String? channel,
+        bool? allowDowngrade}) =>
     VelopackRustLib.instance.api.crateApiVelopackWaitExitThenUpdate(
-        silent: silent, restart: restart, channel: channel);
+        silent: silent,
+        restart: restart,
+        channel: channel,
+        allowDowngrade: allowDowngrade);

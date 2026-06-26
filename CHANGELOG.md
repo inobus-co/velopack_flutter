@@ -3,7 +3,7 @@
 ## 0.3.0
 
 * Added release channel support: `initializeVelopack` now accepts an optional `channel` to override the update channel
-* Added a per-call `channel` override to `isUpdateAvailable`, `getLatestUpdateInfo`, `checkAndDownloadUpdatesWithProgress`, `updateAndRestart`, `updateAndExit`, and `waitExitThenUpdate` for checking or pulling from a different channel without re-initializing
+* Added per-call `channel` and `allowDowngrade` overrides to `isUpdateAvailable`, `getLatestUpdateInfo`, `checkAndDownloadUpdatesWithProgress`, `updateAndRestart`, `updateAndExit`, and `waitExitThenUpdate` for checking or pulling from a different channel (including downgrades) without re-initializing
 * Added `allowDowngrade` to `initializeVelopack` to permit migrating to an older version when switching channels
 * Fixed potential panic in update download by propagating errors instead of `unwrap()`
 

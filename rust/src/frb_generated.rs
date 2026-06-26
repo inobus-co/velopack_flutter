@@ -72,6 +72,7 @@ fn wire__crate__api__velopack__check_and_download_updates_with_progress_impl(
                     &mut deserializer,
                 );
             let api_channel = <Option<String>>::sse_decode(&mut deserializer);
+            let api_allow_downgrade = <Option<bool>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
@@ -80,6 +81,7 @@ fn wire__crate__api__velopack__check_and_download_updates_with_progress_impl(
                             crate::api::velopack::check_and_download_updates_with_progress(
                                 api_progress_sink,
                                 api_channel,
+                                api_allow_downgrade,
                             )?;
                         Ok(output_ok)
                     })(),
@@ -145,11 +147,15 @@ fn wire__crate__api__velopack__get_latest_update_info_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_channel = <Option<String>>::sse_decode(&mut deserializer);
+            let api_allow_downgrade = <Option<bool>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok = crate::api::velopack::get_latest_update_info(api_channel)?;
+                        let output_ok = crate::api::velopack::get_latest_update_info(
+                            api_channel,
+                            api_allow_downgrade,
+                        )?;
                         Ok(output_ok)
                     })(),
                 )
@@ -255,11 +261,15 @@ fn wire__crate__api__velopack__is_update_available_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_channel = <Option<String>>::sse_decode(&mut deserializer);
+            let api_allow_downgrade = <Option<bool>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok = crate::api::velopack::is_update_available(api_channel)?;
+                        let output_ok = crate::api::velopack::is_update_available(
+                            api_channel,
+                            api_allow_downgrade,
+                        )?;
                         Ok(output_ok)
                     })(),
                 )
@@ -290,11 +300,15 @@ fn wire__crate__api__velopack__update_and_exit_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_channel = <Option<String>>::sse_decode(&mut deserializer);
+            let api_allow_downgrade = <Option<bool>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok = crate::api::velopack::update_and_exit(api_channel)?;
+                        let output_ok = crate::api::velopack::update_and_exit(
+                            api_channel,
+                            api_allow_downgrade,
+                        )?;
                         Ok(output_ok)
                     })(),
                 )
@@ -325,11 +339,15 @@ fn wire__crate__api__velopack__update_and_restart_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_channel = <Option<String>>::sse_decode(&mut deserializer);
+            let api_allow_downgrade = <Option<bool>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                     (move || {
-                        let output_ok = crate::api::velopack::update_and_restart(api_channel)?;
+                        let output_ok = crate::api::velopack::update_and_restart(
+                            api_channel,
+                            api_allow_downgrade,
+                        )?;
                         Ok(output_ok)
                     })(),
                 )
@@ -362,6 +380,7 @@ fn wire__crate__api__velopack__wait_exit_then_update_impl(
             let api_silent = <bool>::sse_decode(&mut deserializer);
             let api_restart = <bool>::sse_decode(&mut deserializer);
             let api_channel = <Option<String>>::sse_decode(&mut deserializer);
+            let api_allow_downgrade = <Option<bool>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
@@ -370,6 +389,7 @@ fn wire__crate__api__velopack__wait_exit_then_update_impl(
                             api_silent,
                             api_restart,
                             api_channel,
+                            api_allow_downgrade,
                         )?;
                         Ok(output_ok)
                     })(),
@@ -475,6 +495,17 @@ impl SseDecode for Option<String> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<String>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<bool> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<bool>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -744,6 +775,16 @@ impl SseEncode for Option<String> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <String>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<bool> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <bool>::sse_encode(value, serializer);
         }
     }
 }

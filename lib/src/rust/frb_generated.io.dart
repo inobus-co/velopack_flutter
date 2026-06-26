@@ -33,6 +33,9 @@ abstract class VelopackRustLibApiImplPlatform
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  bool dco_decode_box_autoadd_bool(dynamic raw);
+
+  @protected
   UpdateInfo dco_decode_box_autoadd_update_info(dynamic raw);
 
   @protected
@@ -49,6 +52,9 @@ abstract class VelopackRustLibApiImplPlatform
 
   @protected
   String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
 
   @protected
   UpdateInfo? dco_decode_opt_box_autoadd_update_info(dynamic raw);
@@ -85,6 +91,9 @@ abstract class VelopackRustLibApiImplPlatform
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
   UpdateInfo sse_decode_box_autoadd_update_info(SseDeserializer deserializer);
 
   @protected
@@ -103,6 +112,9 @@ abstract class VelopackRustLibApiImplPlatform
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
 
   @protected
   UpdateInfo? sse_decode_opt_box_autoadd_update_info(
@@ -145,6 +157,9 @@ abstract class VelopackRustLibApiImplPlatform
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_update_info(
       UpdateInfo self, SseSerializer serializer);
 
@@ -165,6 +180,9 @@ abstract class VelopackRustLibApiImplPlatform
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_update_info(
